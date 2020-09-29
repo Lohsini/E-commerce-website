@@ -1,47 +1,74 @@
 <template>
-  <div>
-    <nav class="d-none d-md-block bg-light sidebar">
-      <div class="sidebar-sticky">
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1
-         text-muted">
-          <span>管理員</span>
-          <a class="d-flex align-items-center text-muted" href="#">
-            <span data-feather="plus-circle"></span>
-          </a>
-        </h6>
-        <ul class="nav flex-column mb-2">
-          <li class="nav-item">
-            <router-link to="/admin/products" class="nav-link">
-            <i class="fas fa-box-open"></i> 產品列表</router-link>
-          </li>
-        </ul>
-        <ul class="nav flex-column mb-2">
-          <li class="nav-item">
-            <router-link to="/admin/products" class="nav-link">
-            <i class="fas fa-th-list"></i> 訂單列表</router-link>
-          </li>
-        </ul>
-        <ul class="nav flex-column mb-2">
-          <li class="nav-item">
-            <router-link to="/admin/products" class="nav-link">
-            <i class="fas fa-ticket-alt"></i> 優惠票券</router-link>
-          </li>
-        </ul>
+  <div class="sidebar">
+    <div class="siedebar-content py-4">
+      <h3 class="text-muted">管理員</h3>
+      <ul class="nav mb-3">
+        <li class="nav-item">
+          <router-link to="/admin/products" class="nav-link">
+            <i class="fas fa-box-open"></i> 產品列表
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/admin/" class="nav-link">
+            <i class="fas fa-th-list"></i> 訂單列表
+          </router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/admin/" class="nav-link">
+            <i class="fas fa-ticket-alt"></i> 優惠票券
+          </router-link>
+        </li>
+      </ul>
 
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1
-         text-muted">
-          <span>模擬功能</span>
-          <a class="d-flex align-items-center text-muted" href="#">
-            <span data-feather="plus-circle"></span>
-          </a>
-        </h6>
-        <ul class="nav flex-column mb-2">
-          <li class="nav-item">
-            <router-link to="/customerorder" class="nav-link">
-            <i class="fas fa-th-list"></i> 模擬訂單</router-link>
-          </li>
-        </ul>
-      </div>
-    </nav>
+      <h3 class="text-muted">模擬功能</h3>
+      <ul class="nav">
+        <li class="nav-item">
+          <router-link to="/customerorder" class="nav-link">
+            <i class="fas fa-th-list"></i> 模擬訂單
+          </router-link>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
+
+<script>
+export default {};
+</script>
+
+<style lang="scss" scoped>
+.activee {
+  background-color: #eaeaea;
+}
+
+.sidebar {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.04);
+  .siedebar-content {
+    h3 {
+      font-size: 1.1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 10px;
+      margin: 0;
+    }
+    ul {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+@media screen and (max-width: 766px) {
+  .sidebar {
+    .siedebar-content {
+      ul {
+        display: flex;
+        flex-direction: row;
+      }
+    }
+  }
+}
+</style>

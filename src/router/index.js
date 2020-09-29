@@ -1,9 +1,10 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Login from '@/components/pages/login.vue';
-import Dashboard from '@/components/dashboard.vue';
+import LoginPage from '@/views/LoginPage.vue';
+import ManagerPage from '@/views/ManagerPage.vue';
 import Products from '@/components/pages/products.vue';
 import CustomerOrder from '@/components/pages/customerOrder.vue';
+import Home from '@/views/Home.vue';
 
 Vue.use(VueRouter);
 
@@ -18,17 +19,22 @@ const routes = [
   },
   {
     path: '*',
-    redirect: '/login',
+    redirect: '/',
+  },
+  {
+    name: 'Home',
+    path: '/',
+    component: Home,
   },
   {
     name: '登入',
     path: '/login',
-    component: Login,
+    component: LoginPage,
   },
   {
-    name: 'dashboard',
+    name: 'managerpage',
     path: '/admin',
-    component: Dashboard,
+    component: ManagerPage,
     children: [
       {
         name: 'products',
@@ -39,13 +45,13 @@ const routes = [
     ],
   },
   {
-    name: 'dashboard',
-    path: '/',
-    component: Dashboard,
+    name: 'managerpage',
+    path: '/customerorder',
+    component: ManagerPage,
     children: [
       {
         name: '模擬訂單',
-        path: '/customerorder',
+        path: '/',
         component: CustomerOrder,
       },
     ],
@@ -54,6 +60,8 @@ const routes = [
 
 const router = new VueRouter({
   routes,
+  linkActiveClass: 'active',
+  linkExactActiveClass: 'activee',
 });
 
 export default router;
