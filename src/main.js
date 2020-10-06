@@ -16,6 +16,7 @@ Vue.config.productionTip = false;
 Vue.use(VueAxios, axios);
 Vue.component('Loading', Loading);
 Vue.filter('currency', currencyFilter);
+axios.defaults.withCredentials = true;
 
 new Vue({
   router,

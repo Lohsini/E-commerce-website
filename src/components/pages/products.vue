@@ -50,6 +50,7 @@
       </ul>
     </nav>
 
+    <!-- productModal -->
     <div
       class="modal fade"
       id="productModal"
@@ -211,6 +212,7 @@
       </div>
     </div>
 
+    <!-- delProductModal -->
     <div
       class="modal fade"
       id="delProductModal"

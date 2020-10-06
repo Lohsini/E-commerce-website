@@ -5,6 +5,7 @@ import ManagerPage from '@/views/ManagerPage.vue';
 import Products from '@/components/pages/products.vue';
 import CustomerOrder from '@/components/pages/customerOrder.vue';
 import Home from '@/views/Home.vue';
+import orderlist from '@/components/pages/orderlist.vue';
 
 Vue.use(VueRouter);
 
@@ -40,7 +41,19 @@ const routes = [
         name: 'products',
         path: 'products',
         component: Products,
-        // meta: { requiresAuth: true },
+        meta: { requiresAuth: true },
+      },
+      {
+        name: 'orderlist',
+        path: 'orderlist',
+        component: orderlist,
+        meta: { requiresAuth: true },
+      },
+      {
+        name: 'orderlist',
+        path: 'orderlist',
+        component: orderlist,
+        meta: { requiresAuth: true },
       },
     ],
   },
