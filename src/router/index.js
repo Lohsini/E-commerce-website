@@ -1,36 +1,48 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import LoginPage from '@/views/LoginPage.vue';
 import ManagerPage from '@/views/ManagerPage.vue';
 import Products from '@/components/pages/products.vue';
 import CustomerOrder from '@/components/pages/customerOrder.vue';
-import Home from '@/views/Home.vue';
 import orderlist from '@/components/pages/orderlist.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
-  },
-  {
     path: '*',
     redirect: '/',
   },
   {
-    name: 'Home',
+    name: 'shoppage',
     path: '/',
-    component: Home,
-  },
-  {
-    name: '登入',
-    path: '/login',
-    component: LoginPage,
+    component: () => import('../views/shopPage.vue'),
+    children: [
+      {
+        name: 'landingPage',
+        path: '/',
+        component: () => import('@/components/shopPages/landingPage.vue'),
+      },
+      {
+        name: 'landingPage',
+        path: '/landingPage',
+        component: () => import('@/components/shopPages/landingPage.vue'),
+      },
+      {
+        name: 'shopping',
+        path: '/shopping',
+        component: () => import('@/components/shopPages/shopping.vue'),
+      },
+      {
+        name: 'cart',
+        path: '/cart',
+        component: () => import('@/components/shopPages/cart.vue'),
+      },
+      {
+        name: 'loginPage',
+        path: '/loginpage',
+        component: () => import('@/components/shopPages/loginPage.vue'),
+      },
+    ],
   },
   {
     name: 'managerpage',

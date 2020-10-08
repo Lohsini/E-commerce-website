@@ -241,7 +241,7 @@ export default {
       vm.isLoading = true;
       this.$http.get(api).then((response) => {
         // eslint-disable-next-line no-console
-        console.log(response.data);
+        // console.log(response.data);
         vm.isLoading = false;
         vm.products = response.data.products;
         vm.pagination = response.data.pagination;

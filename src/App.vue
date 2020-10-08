@@ -10,6 +10,8 @@ export default {
   name: 'App',
   components: {
   },
+  computed: {
+  },
 };
 </script>
 

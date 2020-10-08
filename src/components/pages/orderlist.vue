@@ -12,17 +12,20 @@
         <th>付款日期</th>
         <th>付款方式</th>
         <th>總價</th>
+        <th>修改</th>
       </thead>
       <tbody>
-        <tr class="orders" v-for="(item) in orderlist" :key="item.id" @click="openDetail(item)">
-          <td>{{ item.num }}</td>
-          <td>{{ changedateFormat(item.create_at) }}</td>
-          <td class="text-left">{{ item.id }}</td>
-          <td v-if="item.is_paid === true" style="color: green;">已完成</td>
-          <td v-if="item.is_paid === false" style="color: red;">未完成</td>
-          <td>{{ item.paid_date }}</td>
-          <td>{{ item.payment_method }}</td>
-          <td class="text-right">{{ item.total | currency }}</td>
+        <tr class="orders" v-for="(item) in orderlist" :key="item.id">
+          <td @click="openDetail(item)">{{ item.num }}</td>
+          <td @click="openDetail(item)">{{ changedateFormat(item.create_at) }}</td>
+          <td @click="openDetail(item)" class="text-left">{{ item.id }}</td>
+          <td @click="openDetail(item)" v-if="item.is_paid === true" style="color: green;">已完成</td>
+          <td @click="openDetail(item)" v-if="item.is_paid === false" style="color: red;">未完成</td>
+          <td @click="openDetail(item)">{{ item.paid_date }}</td>
+          <td @click="openDetail(item)">{{ item.payment_method }}</td>
+          <td @click="openDetail(item)" class="text-right">{{ item.total | currency }}</td>
+          <td><button class="btn btn-outline-primary btn-sm" @click="openEdit(item)">
+            編輯</button></td>
         </tr>
       </tbody>
     </table>
@@ -50,14 +53,14 @@
 
           <!-- body(內容) -->
           <div class="modal-body">
-            <div class="orderer-info form-group text-left" v-if="editModalObj.user">
+            <div class="orderer-info form-group text-left" v-if="infoModalObj.user">
               <h4>訂購人資料</h4>
-              <p>訂購人姓名：{{ editModalObj.user.name }}</p>
-              <p>訂購人電話：{{ editModalObj.user.tel }}</p>
-              <p>訂購人信箱：{{ editModalObj.user.email }}</p>
-              <p>訂購人地址：{{ editModalObj.user.address }}</p>
-              <p>備註：<span v-if="!editModalObj.message">無備註</span>
-                      <span v-if="editModalObj.message">{{ editModalObj.message }}</span>
+              <p>訂購人姓名：{{ infoModalObj.user.name }}</p>
+              <p>訂購人電話：{{ infoModalObj.user.tel }}</p>
+              <p>訂購人信箱：{{ infoModalObj.user.email }}</p>
+              <p>訂購人地址：{{ infoModalObj.user.address }}</p>
+              <p>備註：<span v-if="!infoModalObj.message">無備註</span>
+                      <span v-if="infoModalObj.message">{{ infoModalObj.message }}</span>
               </p>
             </div>
             <div class="order-list form-group" v-if="productArray">
@@ -94,6 +97,50 @@
       </div>
     </div>
 
+    <!-- 編輯區 -->
+    <div
+      class="modal fade"
+      id="editInfo"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="editInfoLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content border-0">
+          <!-- header(標題) -->
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title" id="editInfoLabel">
+              <span style="font-weight: 900;">編輯訂購資訊</span>
+            </h5>
+            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true" style="fontSize: 2rem;">&times;</span>
+            </button>
+          </div>
+
+          <!-- body(內容) -->
+          <div class="modal-body">
+            <div class="orderer-info form-group text-left" v-if="editModalObj">
+              <h4>付款資料</h4>
+              <p>付款：
+                <input type="text" v-model="editModalObj.is_paid">
+              </p>
+              <p>付款日期：
+                <input type="text" v-model="editModalObj.paid_date">
+              </p>
+              <p>付款方式：
+                <input type="text" v-model="editModalObj.payment_method">
+              </p>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm bg-primary text-white"
+            data-dismiss="modal" @click="editOrderList(editModalObj.id)">這個按鈕的api不存在</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -108,6 +155,7 @@ export default {
       orderlist: [],
       pagination: {},
       tempProduct: {},
+      infoModalObj: {},
       editModalObj: {},
       productArray: [],
       isNew: false,
@@ -118,6 +166,19 @@ export default {
     };
   },
   methods: {
+    editOrderList(id) { // 不知道錯在哪
+      console.log('this.editModalObj.is_paid:', this.editModalObj.is_paid);
+      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/order/${id}`;
+      const vm = this;
+      console.log('api:', api);
+      vm.isLoading = true;
+      const formData = new FormData();
+      formData.append('is_paid', this.editModalObj.is_paid);
+      this.$http.put(api, formData).then((response) => {
+        console.log(response.data);
+        vm.isLoading = false;
+      });
+    },
     getOrderlist(page = 1) {
       const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/orders?page=${page}`;
       const vm = this;
@@ -131,16 +192,20 @@ export default {
       });
     },
     openDetail(item) {
-      this.editModalObj = { ...item };
+      this.infoModalObj = { ...item };
       this.productArray = []; // 清空
-      const keyArray = Object.keys(this.editModalObj.products);
+      const keyArray = Object.keys(this.infoModalObj.products);
       for (let i = 0; i < keyArray.length; i += 1) {
         const key = keyArray[i];
-        const keyObject = this.editModalObj.products[key];
+        const keyObject = this.infoModalObj.products[key];
         // console.log('keyObject:', keyObject);
         this.productArray.push(keyObject);
       }
       $('#detailInfo').modal('show');
+    },
+    openEdit(item) {
+      this.editModalObj = { ...item };
+      $('#editInfo').modal('show');
     },
     changedateFormat(timestamp) {
       const date = new Date(timestamp * 1000);
@@ -185,12 +250,15 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.table td{
+  vertical-align: middle;
+}
 .orders:hover{
   background-color: #f7f7ff;
   cursor: pointer;
 }
 
-#detailInfo{
+.modal{
   h4{
     text-align: left;
     margin: 0;
