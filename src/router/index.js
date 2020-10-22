@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import ManagerPage from '@/views/ManagerPage.vue';
+import AdminPage from '@/views/AdminPage.vue';
 import Products from '@/components/pages/products.vue';
 import CustomerOrder from '@/components/pages/customerOrder.vue';
 import orderlist from '@/components/pages/orderlist.vue';
@@ -38,6 +38,11 @@ const routes = [
         component: () => import('@/components/shopPages/cart.vue'),
       },
       {
+        name: 'imformationForm',
+        path: '/imformationform',
+        component: () => import('@/components/shopPages/imformationForm.vue'),
+      },
+      {
         name: 'loginPage',
         path: '/loginpage',
         component: () => import('@/components/shopPages/loginPage.vue'),
@@ -47,7 +52,7 @@ const routes = [
   {
     name: 'managerpage',
     path: '/admin',
-    component: ManagerPage,
+    component: AdminPage,
     children: [
       {
         name: 'products',
@@ -72,7 +77,7 @@ const routes = [
   {
     name: 'managerpage',
     path: '/customerorder',
-    component: ManagerPage,
+    component: AdminPage,
     children: [
       {
         name: '模擬訂單',

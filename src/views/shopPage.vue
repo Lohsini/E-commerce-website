@@ -11,9 +11,10 @@
         貓咪與他的賣場
       </router-link>
 
+      <router-link class="nav-link after" to="/loginpage">管理員登入</router-link>
       <router-link class="nav-link after" to="/loginpage">會員登入</router-link>
       <router-link class="nav-link after" to="/shopping">去逛逛</router-link>
-      <router-link class="nav-link after" to="/cart">結帳頁面</router-link>
+      <!-- <router-link class="nav-link after" to="/cart">結帳頁面</router-link> -->
 
       <!-- 購物車內的數量 (Button 內包含 icon, 數量 badge) -->
       <div class="dropdown ml-auto">
@@ -39,13 +40,15 @@
                 </td>
                 <td class="align-middle">{{ item.product.title }}</td>
                 <td class="align-middle">{{ item.qty }}{{item.product.unit}}</td>
-                <td class="align-middle text-right">{{item.total}}</td>
+                <td class="align-middle text-right" @click="see(item)">{{item.total}}</td>
               </tr>
             </tbody>
           </table>
-          <button class="btn btn-primary btn-block">
+          <router-link class="btn btn-primary btn-block" to="/cart">
+            <i class="fa fa-cart-plus" aria-hidden="true"></i> 結帳去</router-link>
+          <!-- <button class="btn btn-primary btn-block">
             <i class="fa fa-cart-plus" aria-hidden="true"></i> 結帳去
-          </button>
+          </button> -->
         </div>
       </div>
     </nav>
@@ -88,18 +91,21 @@ export default {
           vm.cart = response.data.data;
         }
         vm.$store.dispatch('updateLoading', false);
-        console.log('取得購物車', response.data.data);
+        // console.log('取得購物車', response.data.data);
       });
     },
     removeCart(id) {
       const vm = this;
-      const url = `${process.env.APIPATH}/api/${process.env.CUSTOMPATH}/cart/${id}`;
+      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${id}`;
       vm.$store.dispatch('updateLoading', true);
       this.$http.delete(url).then((response) => {
         vm.$store.dispatch('updateLoading', false);
         vm.getCart();
         console.log('刪除購物車項目', response);
       });
+    },
+    see(item) {
+      console.log(item);
     },
   },
   created() {

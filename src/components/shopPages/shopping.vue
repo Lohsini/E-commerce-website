@@ -13,13 +13,13 @@
       </div>
     </div>
 
-    <div class="container-fluid mb-3">
+    <div class="container mb-3">
       <div class="row">
 
         <!-- 左側選單 (List group) -->
         <div class="col-md-2">
           <div class="list-group" ><!-- sticky-top -->
-            <a class="list-group-item list-group-item-action"
+            <a class="list-group-item list-group-item-action text-left"
               href="#" @click.prevent="searchText = item"
               :class="{ 'active': item === searchText}"
               v-for="item in categories" :key="item">
@@ -56,7 +56,7 @@
             <div class="row align-items-stretch">
               <!-- 商品 -->
               <div class="col col-md-3 mb-4" v-for="(item) in filterData" :key="item.id">
-                <div class="product-card">
+                <div class="product-card" style="height: 100%;">
                   <div class="card border-0 box-shadow text-center h-100">
                     <div style="height: 150px; background-size: cover; background-position: center"
                     :style="{backgroundImage: `url(${item.imageUrl})`}"></div>
@@ -65,11 +65,12 @@
                       <h5 class="card-title">
                         <a href="#" class="text-dark">{{item.title}}</a>
                       </h5>
-                      <p class="card-text text-left">{{item.content}}</p>
-                      <div class="d-flex justify-content-between align-items-baseline">
-                        <div v-if="!item.price">{{item.origin_price}} 元</div>
-                        <div v-if="item.price">原價 {{item.origin_price}} 元</div>
-                        <div v-if="item.price">現在只要 {{item.price}} 元</div>
+                      <!-- <p class="card-text text-left">{{item.content}}</p> -->
+                      <div class="text-right">
+                        <div v-if="item.origin_price === item.price">{{item.origin_price}} 元</div>
+                        <div v-if="item.origin_price !== item.price">
+                          原價 {{item.origin_price}} 元</div>
+                        <div v-if="item.origin_price !== item.price">現在只要 {{item.price}} 元</div>
                       </div>
                     </div>
                     <div class="card-footer border-top-0 bg-white">
@@ -119,7 +120,7 @@ export default {
       vm.$store.dispatch('updateLoading', true);
       this.$http.get(url).then((response) => {
         vm.products = response.data.products;
-        console.log('取得產品列表:', response.data.products);
+        // console.log('取得產品列表:', response.data.products);
         vm.getUnique();
         vm.$store.dispatch('updateLoading', false);
       });
@@ -170,6 +171,9 @@ export default {
   padding: 5px;
   .product-card{
     border: solid 1px #ddd;
+  }
+  .card{
+    font-size: 1rem;
   }
 }
 </style>

@@ -7,7 +7,7 @@
       placeholder="Email address" v-model="user.username" required autofocus>
       <label for="inputPassword" class="sr-only">Password</label>
       <input type="password" id="inputPassword" class="form-control"
-      placeholder="Password" v-model="user.password" required>
+      placeholder="Password" v-model="user.password" required @keyup.enter="signin">
       <div class="checkbox mb-3">
         <label>
         <input type="checkbox" value="remember-me"> Remember me

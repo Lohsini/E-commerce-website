@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import navbar from '@/components/navbar.vue';
+import navbar from '@/components/adminnavbar.vue';
 import sidebar from '@/components/sidebar.vue';
 import alert from '@/components/Alertmessages.vue';
 
