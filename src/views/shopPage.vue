@@ -40,7 +40,7 @@
                 </td>
                 <td class="align-middle">{{ item.product.title }}</td>
                 <td class="align-middle">{{ item.qty }}{{item.product.unit}}</td>
-                <td class="align-middle text-right" @click="see(item)">{{item.total}}</td>
+                <td class="align-middle text-right">{{item.total}}</td>
               </tr>
             </tbody>
           </table>
@@ -64,6 +64,7 @@
 
 <script>
 import Footer from '@/components/footer.vue';
+import { mapGetters, mapActions } from 'vuex';
 
 export default {
   components: {
@@ -71,41 +72,27 @@ export default {
   },
   data() {
     return {
-      cart: {
-        carts: [],
-      },
+      // cart: {
+      //   carts: [],
+      // },
     };
   },
   computed: {
-    isLoading() {
-      return this.$store.state.isLoading;
-    },
+    // isLoading() {
+    //   return this.$store.state.isLoading;
+    // },
+    // cart() {
+    //   return this.$store.state.cart;
+    // },
+    ...mapGetters(['isLoading', 'cart']),
   },
   methods: {
-    getCart() {
-      const vm = this;
-      vm.$store.dispatch('updateLoading', true);
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
-      this.$http.get(url).then((response) => {
-        if (response.data.data.carts) {
-          vm.cart = response.data.data;
-        }
-        vm.$store.dispatch('updateLoading', false);
-        // console.log('取得購物車', response.data.data);
-      });
-    },
+    ...mapActions(['getCart']),
+    // getCart() {
+    //   this.$store.dispatch('getCart');
+    // },
     removeCart(id) {
-      const vm = this;
-      const url = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${id}`;
-      vm.$store.dispatch('updateLoading', true);
-      this.$http.delete(url).then((response) => {
-        vm.$store.dispatch('updateLoading', false);
-        vm.getCart();
-        console.log('刪除購物車項目', response);
-      });
-    },
-    see(item) {
-      console.log(item);
+      this.$store.dispatch('removeCart', id);
     },
   },
   created() {

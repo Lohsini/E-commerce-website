@@ -9,7 +9,7 @@
     </div>
 
     <!-- 購物車 -->
-    <div class="my-5 d-flex justify-content-center" v-if="cartLength !== 0">
+    <div class="my-5 d-flex justify-content-center" v-if="cart.carts.length !== 0">
       <div class="col-md-6 row justify-content-center">
         <table class="table mt-4" style="width: 100%;">
           <thead>
@@ -24,7 +24,7 @@
                 <button
                   type="button"
                   class="btn btn-outline-danger btn-sm"
-                  @click="removeCartItem(item.id)"
+                  @click="removeCart(item.id)"
                 >
                   <i class="far fa-trash-alt"></i>
                 </button>
@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <div class="my-5 d-flex justify-content-center" v-if="cartLength === 0">
+    <div class="my-5 d-flex justify-content-center" v-if="cart.carts.length === 0">
       <p>還沒有選擇商品喔！<br>
       <router-link class="btn btn-success my-4" to="/shopping">來去逛逛</router-link></p>
     </div>
@@ -73,38 +73,30 @@ export default {
     return {
       products: [],
       product: {},
-      cart: [],
-      cartLength: 0,
+      // cart: {
+      //   carts: [],
+      // },
       pagination: {},
-      isLoading: false,
+      // isLoading: false,
       status: {
         loadingItem: '',
       },
     };
   },
+  computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
+    cart() {
+      return this.$store.state.cart;
+    },
+  },
   methods: {
     getCart() {
-      const vm = this;
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart`;
-      vm.isLoading = true;
-      this.$http.get(api).then((response) => {
-        vm.cart = response.data.data;
-        vm.cartLength = vm.cart.carts.length;
-        // console.log(vm.cartLength);
-        // console.log(response.data.data);
-        vm.isLoading = false;
-      });
+      this.$store.dispatch('getCart');
     },
-    removeCartItem(id) {
-      const vm = this;
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/cart/${id}`;
-      vm.isLoading = true;
-      this.$http.delete(api).then((response) => {
-        // eslint-disable-next-line no-console
-        console.log(response.data);
-        vm.getCart();
-        vm.isLoading = false;
-      });
+    removeCart(id) {
+      this.$store.dispatch('removeCart', id);
     },
   },
   created() {
