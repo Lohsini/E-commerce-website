@@ -136,7 +136,7 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-sm bg-primary text-white"
-            data-dismiss="modal" @click="editOrderList(editModalObj.id)">這個按鈕的api不存在</button>
+            data-dismiss="modal" @click="editOrderList(editModalObj.id)">這個按鈕的api呈現後端錯誤</button>
           </div>
         </div>
       </div>
@@ -148,8 +148,6 @@
 import $ from 'jquery';
 
 export default {
-  computed: {
-  },
   data() {
     return {
       orderlist: [],
@@ -159,33 +157,22 @@ export default {
       editModalObj: {},
       productArray: [],
       isNew: false,
-      isLoading: false,
-      status: {
-        fileUploading: false,
-      },
+      // isLoading: false,
     };
   },
-  methods: {
-    editOrderList(id) { // 不知道錯在哪
-      console.log('this.editModalObj.is_paid:', this.editModalObj.is_paid);
-      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/order/${id}`;
-      const vm = this;
-      console.log('api:', api);
-      vm.isLoading = true;
-      const formData = new FormData();
-      formData.append('is_paid', this.editModalObj.is_paid);
-      this.$http.put(api, formData).then((response) => {
-        console.log(response.data);
-        vm.isLoading = false;
-      });
+  computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
     },
+  },
+  methods: {
     getOrderlist(page = 1) {
       const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/orders?page=${page}`;
       const vm = this;
-      vm.isLoading = true;
+      vm.$store.dispatch('updateLoading', true);
       this.$http.get(api).then((response) => {
         // console.log(response.data.orders);
-        vm.isLoading = false;
+        vm.$store.dispatch('updateLoading', false);
         vm.orderlist = response.data.orders;
         vm.pagination = response.data.pagination;
         // console.log(vm.pagination);
@@ -206,6 +193,19 @@ export default {
     openEdit(item) {
       this.editModalObj = { ...item };
       $('#editInfo').modal('show');
+    },
+    editOrderList(id) { // 不知道錯在哪 顯示500
+      console.log('this.editModalObj.is_paid:', this.editModalObj.is_paid);
+      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/order/${id}`;
+      const vm = this;
+      console.log('api:', api);
+      vm.$store.dispatch('updateLoading', true);
+      const formData = new FormData();
+      formData.append('is_paid', this.editModalObj.is_paid);
+      this.$http.put(api, formData).then((response) => {
+        console.log(response.data);
+        vm.$store.dispatch('updateLoading', false);
+      });
     },
     changedateFormat(timestamp) {
       const date = new Date(timestamp * 1000);

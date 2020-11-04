@@ -191,8 +191,13 @@ export default {
       pagination: {},
       tempProduct: {},
       isNew: false,
-      isLoading: false,
+      // isLoading: false,
     };
+  },
+  computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
   },
   methods: {
     getCoupon(page = 1) {

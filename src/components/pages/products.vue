@@ -255,20 +255,25 @@ export default {
       pagination: {},
       tempProduct: {},
       isNew: false,
-      isLoading: false,
+      // isLoading: false,
       status: {
         fileUploading: false,
       },
     };
   },
+  computed: {
+    isLoading() {
+      return this.$store.state.isLoading;
+    },
+  },
   methods: {
     getProducts(page = 1) {
       const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/products?page=${page}`;
       const vm = this;
-      this.$store.dispatch('updateLoading', true);
+      vm.$store.dispatch('updateLoading', true);
       this.$http.get(api).then((response) => {
         // console.log(response.data);
-        this.$store.dispatch('updateLoading', false);
+        vm.$store.dispatch('updateLoading', false);
         vm.products = response.data.products;
         vm.pagination = response.data.pagination;
         // console.log(vm.pagination);
