@@ -1,11 +1,8 @@
 <template>
   <div class="shoppage">
-    <!-- 會用到 -->
-    <!-- <navbar style="position:sticky; top: 0; z-index:10;"/> -->
-    <!-- 做個記號 -->
 
     <!-- navbar內含購物車會加數量 -->
-    <nav class="navbar navbar-light bg-light">
+    <nav class="navbar navbar-light bg-light" style="position:sticky; top: 0; z-index:10;">
       <router-link class="navbar-brand" to="/">
         <i class="fas fa-paw text-info"></i>
         貓咪與他的賣場
@@ -46,9 +43,6 @@
           </table>
           <router-link class="btn btn-primary btn-block" to="/cart">
             <i class="fa fa-cart-plus" aria-hidden="true"></i> 結帳去</router-link>
-          <!-- <button class="btn btn-primary btn-block">
-            <i class="fa fa-cart-plus" aria-hidden="true"></i> 結帳去
-          </button> -->
         </div>
       </div>
     </nav>
@@ -105,6 +99,10 @@ export default {
 @import "~bootstrap/scss/bootstrap";
 
 /* 購物車按鈕 */
+.btn:focus,.btn:active {
+   outline: none;
+   box-shadow: none;
+}
 .btn-cart {
   background-color: transparent;
   position: relative;

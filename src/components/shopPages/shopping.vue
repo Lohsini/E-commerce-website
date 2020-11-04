@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 <template>
   <div>
     <!-- jumbotron -->
@@ -13,126 +14,156 @@
       </div>
     </div>
 
-    <div class="container mb-3">
+    <!-- content -->
+    <div class="content container mb-3">
       <div class="row">
-
-        <!-- 左側選單 (List group) -->
-        <div class="col-md-2">
-          <div class="list-group" ><!-- sticky-top -->
-            <a class="list-group-item list-group-item-action text-left"
-              href="#" @click.prevent="searchText = item"
-              :class="{ 'active': item === searchText}"
-              v-for="item in categories" :key="item">
+        <!-- 類別選單 -->
+        <div class="sidebar col-12 col-lg-2">
+          <div class="list-group">
+            <a class="list-group-item list-group-item-action text-left" href="#"
+              v-for="item in categories" :key="item"
+              @click.prevent="categoryFilter = item"
+              :class="{ 'active': item === categoryFilter}">
               <i class="fa fa-street-view" aria-hidden="true"></i>
               {{ item }}
             </a>
             <a href="#" class="list-group-item list-group-item-action"
-              @click.prevent="searchText = ''"
-              :class="{ 'active': searchText === ''}">
+              @click.prevent="categoryFilter = ''"
+              :class="{ 'active': categoryFilter === ''}">
               全部顯示
             </a>
           </div>
         </div>
-
-        <!-- 子頁面 -->
-        <div class="col-md-10">
-          <!-- Search bar -->
-          <div class="d-flex mb-4 ml-auto justify-content-end">
-            <form class="form-inline my-3 my-lg-0">
-              <div class="input-group">
-                <input class="form-control" type="text" v-model="searchText"
-                  placeholder="Search" aria-label="Search">
-                <div class="input-group-append">
-                  <button class="btn btn-outline-secondary" type="button"
-                    @click="searchText = ''">
-                    <i class="fa fa-times"></i>
-                  </button>
+        <!-- 商品區域 -->
+        <div class="product col-12 col-lg-10">
+          <div class="row">
+            <!-- 單個商品卡 -->
+            <div class="product-item col-6 col-sm-4 col-md-3 mb-4"
+              v-for="(item) in filterProducts" :key="item.id">
+              <div class="card h-100">
+                <div class="card-img" @click="getProduct(item.id)"
+                  :style="{backgroundImage: `url(${item.imageUrl})`}">
+                  <h6 class="badge">{{item.category}}</h6>
                 </div>
-              </div>
-            </form>
-          </div>
-          <!-- content -->
-          <div class="tab-pane" id="list-gift">
-            <div class="row align-items-stretch">
-              <!-- 商品 -->
-              <div class="col col-md-3 mb-4" v-for="(item) in filterData" :key="item.id">
-                <div class="product-card" style="height: 100%;">
-                  <div class="card border-0 box-shadow text-center h-100">
-                    <div style="height: 150px; background-size: cover; background-position: center"
-                    :style="{backgroundImage: `url(${item.imageUrl})`}"></div>
-                    <div class="card-body">
-                      <span class="badge badge-secondary float-right ml-2">{{item.category}}</span>
-                      <h5 class="card-title">
-                        <a href="#" class="text-dark">{{item.title}}</a>
-                      </h5>
-                      <!-- <p class="card-text text-left">{{item.content}}</p> -->
-                      <div class="text-right">
-                        <div v-if="item.origin_price === item.price">{{item.origin_price}} 元</div>
-                        <div v-if="item.origin_price !== item.price">
-                          原價 {{item.origin_price}} 元</div>
-                        <div v-if="item.origin_price !== item.price">現在只要 {{item.price}} 元</div>
-                      </div>
-                    </div>
-                    <div class="card-footer border-top-0 bg-white">
-                      <button class="btn btn-outline-secondary btn-block btn-sm"
-                        @click="addtoCart(item.id)">
-                        <i class="fa fa-cart-plus" aria-hidden="true"></i> 加到購物車
-                      </button>
-                    </div>
+                <div class="card-body">
+                  <h5 class="title">
+                    <a href="#" @click.prevent="getProduct(item.id)">{{item.title}}</a>
+                  </h5>
+                  <div class="price text-right">
+                    <div v-if="item.origin_price === item.price">$ {{item.origin_price}}</div>
+                    <div v-if="item.origin_price !== item.price" class="origin_price">
+                      $ {{item.origin_price}}</div>
+                    <div v-if="item.origin_price !== item.price" class="cool_price">
+                      $ {{item.price}}</div>
                   </div>
+                </div>
+                <div class="card-footer">
+                  <button class="btn btn-outline-secondary btn-block btn-sm"
+                    @click="addtoCart(item.id)">
+                    <i class="fa fa-cart-plus" aria-hidden="true"></i> 加到購物車
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
+
+    <!-- 商品細節 -->
+    <div
+      class="modal fade"
+      id="productModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content border-0">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ product.title }}
+              <span v-if="product.description"> - {{ product.description }} </span></h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true" style="font-size: 2rem;">&times;</span>
+            </button>
+          </div>
+
+          <div class="modal-body">
+            <img :src="product.imageUrl" class="img-fluid"/>
+            <div class="price">
+              <div v-if="product.origin_price === product.price">$ {{product.price}}</div>
+              <div v-if="product.origin_price !== product.price" class="origin_price">
+                $ {{product.origin_price}}</div>
+              <div v-if="product.origin_price !== product.price" class="cool_price">
+                $ {{product.price}}</div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div>
+              <select name class="from-control" v-model="product.num">
+                <option :value="num" v-for="num in 10" :key="num">
+                  選購 {{num}} {{product.unit}}</option>
+              </select>
+              <div class="text-muted text-nowrap mt-3">
+                小計
+                <strong>{{ product.num * product.price }}</strong> 元
+              </div>
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary ml-5"
+              @click="addtoCart(product.id, product.num)"
+            >加到購物車</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
+import $ from 'jquery';
 import { mapGetters, mapActions } from 'vuex';
 
 export default {
   name: 'Home',
   data() {
     return {
-      searchText: '',
-      // products: [],
-      // categories: [],
+      categoryFilter: '',
+      product: {},
     };
   },
+  created() {
+    this.getProducts();
+  },
   computed: {
-    filterData() {
-      const vm = this;
-      if (vm.searchText) {
-        return vm.products.filter((item) => {
-          const data = item.title.toLowerCase().includes(vm.searchText.toLowerCase());
+    ...mapGetters('productsModules', ['products', 'categories']),
+    filterProducts() {
+      if (this.categoryFilter) {
+        return this.products.filter((item) => {
+          const data = item.category.toLowerCase().includes(this.categoryFilter.toLowerCase());
           return data;
         });
       }
       return this.products;
     },
-    // products() {
-    //   return this.$store.state.products;
-    // },
-    // categories() {
-    //   return this.$store.state.categories;
-    // },
-    ...mapGetters('productsModules', ['products', 'categories']),
   },
   methods: {
     ...mapActions('productsModules', ['getProducts']),
-    // getProducts() {
-    //   this.$store.dispatch('getProducts');
-    // },
     addtoCart(id, qty = 1) {
       this.$store.dispatch('addtoCart', { id, qty });
     },
-  },
-  created() {
-    this.getProducts();
+    getProduct(id) {
+      const vm = this;
+      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/product/${id}`;
+      this.$http.get(api).then((response) => {
+        vm.product = response.data.product;
+        $('#productModal').modal('show');
+        vm.product.num = 1;
+      });
+    },
   },
 };
 </script>
@@ -150,13 +181,105 @@ export default {
 .bg-lighter {
   background-color: rgba(255, 255, 255, 0.45);
 }
-.col{
-  padding: 5px;
-  .product-card{
-    border: solid 1px #ddd;
+
+.content{
+  .sidebar{
+    padding-top: 5px;
   }
-  .card{
-    font-size: 1rem;
+  .product-item{
+    padding: 5px;
+    .card{
+      font-size: 1rem;
+      .card-img{
+        position: relative;
+        height: 150px;
+        background-size: cover;
+        background-position: center;
+        // border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+        cursor:pointer;
+        h6{
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background-color: rgba(255, 255, 255, 0.7);
+        }
+      }
+      .card-body{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding-bottom: 0px;
+        .title{
+          a{
+            text-decoration:none;
+            color: #000;
+          }
+        }
+        .price{
+          font-weight: 900;
+          .origin_price{
+            text-decoration: line-through;
+            font-size: 0.8rem;
+            color: #aaa;
+            font-weight: 300;
+          }
+          .cool_price{
+            color: rgb(231, 36, 36);
+          }
+        }
+      }
+      .card-footer{
+        border-top: none;
+        background-color: #fff;
+      }
+    }
   }
 }
+
+#productModal{
+  .modal-content{
+    .modal-header{
+      background-color: #fff;
+      border-bottom: none;
+      padding-bottom: 0;
+      .modal-title{
+        font-size: 1.5rem;
+        font-weight: 900;
+      }
+    }
+    .modal-body{
+      padding-bottom: 0;
+      .price{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 20px;
+        font-weight: 900;
+        font-size: 1.5rem;
+        padding: 0 20px;
+        .origin_price{
+          text-decoration: line-through;
+          color: #aaa;
+          font-weight: 300;
+          font-size: 1rem;
+        }
+        .cool_price{
+          color: rgb(231, 36, 36);
+        }
+      }
+    }
+    .modal-footer{
+      padding-top: 0;
+      border-top: none;
+      background-color: #fff;
+      display: flex;
+      align-items: flex-end;
+    }
+  }
+}
+button:focus,button:active {
+  outline: none;
+  box-shadow: none;
+}
+
 </style>

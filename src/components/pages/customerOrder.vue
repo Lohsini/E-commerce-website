@@ -1,6 +1,8 @@
 <template>
   <div>
     <loading :active.sync="isLoading"></loading>
+
+    <!-- 小card內容 shopping.vue -->
     <div class="row mt-4">
       <div class="col-md-4 mb-4" v-for="item in products" :key="item.id">
         <div class="card border-0 shadow-sm">
@@ -42,6 +44,7 @@
       </div>
     </div>
 
+    <!-- 單一細節查看modal -->
     <div
       class="modal fade"
       id="productModal"
@@ -89,6 +92,7 @@
       </div>
     </div>
 
+    <!-- cart.vue 的內容 -->
     <div class="my-5 row justify-content-center" v-if="cartLength !== 0">
       <div class="col-md-6 my-5 row justify-content-center">
         <table class="table mt-4" style="width: 100%;">
@@ -135,6 +139,7 @@
       </div>
     </div>
 
+    <!-- imformationForm.vue 的內容 -->
     <div class="my-5 row justify-content-center">
       <form class="col-md-6" @submit.prevent="createOrder">
         <div class="form-group">
