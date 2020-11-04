@@ -130,9 +130,9 @@
                     />
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="price">單位</label>
+                    <label for="unit">單位</label>
                     <input
-                      type="unit"
+                      type="text"
                       class="form-control"
                       id="unit"
                       placeholder="請輸入單位"
@@ -265,10 +265,10 @@ export default {
     getProducts(page = 1) {
       const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/products?page=${page}`;
       const vm = this;
-      vm.isLoading = true;
+      this.$store.dispatch('updateLoading', true);
       this.$http.get(api).then((response) => {
         // console.log(response.data);
-        vm.isLoading = false;
+        this.$store.dispatch('updateLoading', false);
         vm.products = response.data.products;
         vm.pagination = response.data.pagination;
         // console.log(vm.pagination);

@@ -4,6 +4,7 @@ import AdminPage from '@/views/AdminPage.vue';
 import Products from '@/components/pages/products.vue';
 import CustomerOrder from '@/components/pages/customerOrder.vue';
 import orderlist from '@/components/pages/orderlist.vue';
+import coupon from '@/components/pages/coupon.vue';
 
 Vue.use(VueRouter);
 
@@ -61,9 +62,9 @@ const routes = [
         meta: { requiresAuth: true },
       },
       {
-        name: 'orderlist',
-        path: 'orderlist',
-        component: orderlist,
+        name: 'coupon',
+        path: 'coupon',
+        component: coupon,
         meta: { requiresAuth: true },
       },
       {
