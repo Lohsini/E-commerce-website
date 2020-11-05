@@ -76,6 +76,12 @@
             ></textarea>
           </div>
 
+          <hr>
+
+          <div class="m-2">
+            填寫結帳區
+          </div>
+
           <div class="text-center">
             <router-link class="btn btn-danger mx-2" to="/cart">上一步</router-link>
             <button class="btn btn-success mx-2">去結帳 > 送出訂單</button>
@@ -121,9 +127,21 @@ export default {
       const order = vm.form;
       vm.isLoading = true;
       this.$http.post(api, { data: order }).then((response) => {
-        // eslint-disable-next-line no-console
         console.log('訂單已建立', response.data);
         vm.isLoading = false;
+        this.payOrder(response.data.orderId);
+      });
+    },
+    payOrder(id) {
+      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/pay/${id}`;
+      const pay = {
+        order_id: id,
+      };
+      this.isLoading = true;
+      this.$http.post(api, { data: pay }).then((response) => {
+        console.log('payOrder', response.data.message);
+        this.isLoading = false;
+        this.$router.push('/checkout');
       });
     },
   },

@@ -8,6 +8,7 @@
       <thead>
         <th width="120">due_date</th>
         <th width="120">id</th>
+        <th width="120">code</th>
         <th width="120">percent</th>
         <th width="100">title</th>
         <th width="120">is_enabled</th>
@@ -16,6 +17,7 @@
       <tbody v-for="(item) in coupons" :key="item.id">
         <td>{{ item.due_date }}</td>
         <td>{{ item.id }}</td>
+        <td>{{ item.code }}</td>
         <td>{{ item.percent }}</td>
         <td>{{ item.title }}</td>
         <td>

@@ -44,6 +44,11 @@ const routes = [
         component: () => import('@/components/shopPages/imformationForm.vue'),
       },
       {
+        name: 'checkout',
+        path: '/checkout',
+        component: () => import('@/components/shopPages/checkout.vue'),
+      },
+      {
         name: 'loginPage',
         path: '/loginpage',
         component: () => import('@/components/shopPages/loginPage.vue'),

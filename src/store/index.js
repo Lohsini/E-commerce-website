@@ -23,7 +23,7 @@ export default new Vuex.Store({
       context.commit('LOADING', true);
       axios.get(api).then((response) => {
         context.commit('CART', response.data.data);
-        // console.log('取得購物車列表:', response.data.products);
+        console.log('取得購物車列表:', response.data);
         context.commit('LOADING', false);
       });
     },

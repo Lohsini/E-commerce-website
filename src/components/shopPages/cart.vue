@@ -37,21 +37,22 @@
           <tfoot>
             <tr>
               <td colspan="3" class="text-right">總計</td>
-              <td class="text-right">{{ cart.total }}</td>
+              <td class="text-right">{{ cart.total | currency  }}</td>
             </tr>
             <tr v-if="cart.final_total !== cart.total">
               <td colspan="3" class="text-right text-success">折扣價</td>
-              <td class="text-right text-success">{{ cart.final_total }}</td>
+              <td class="text-right text-success">{{ cart.final_total | currency }}</td>
             </tr>
           </tfoot>
         </table>
         <!-- 優惠券的部分還沒寫，未來加 -->
         <div class="input-group mb-3 input-group-sm">
-          <input type="text" class="form-control" placeholder="請輸入優惠碼" />
+          <input type="text" class="form-control" placeholder="請輸入優惠碼" v-model="couponcode"/>
           <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button">套用優惠碼</button>
+            <button class="btn btn-outline-secondary" type="button" @click="coupon">套用優惠碼</button>
           </div>
         </div>
+
         <div class="text-center">
           <router-link class="btn btn-success" to="/imformationform">下一步</router-link>
         </div>
@@ -81,6 +82,7 @@ export default {
       status: {
         loadingItem: '',
       },
+      couponcode: '',
     };
   },
   computed: {
@@ -97,6 +99,22 @@ export default {
     },
     removeCart(id) {
       this.$store.dispatch('removeCart', id);
+    },
+    coupon() {
+      console.log('this.couponcode:', this.couponcode);
+      const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/coupon`;
+      const item = {
+        code: this.couponcode,
+      };
+      this.$http.post(api, { data: item }).then((response) => {
+        console.log(response.data);
+        if (response.data.success) {
+          this.getCart();
+        }
+        if (!response.data.success) {
+          this.cart.final_total = this.cart.total;
+        }
+      });
     },
   },
   created() {
