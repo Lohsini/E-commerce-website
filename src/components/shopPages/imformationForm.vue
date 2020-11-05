@@ -140,6 +140,7 @@ export default {
       this.isLoading = true;
       this.$http.post(api, { data: pay }).then((response) => {
         console.log('payOrder', response.data.message);
+        this.$store.dispatch('getCart'); // 購物車歸零後再次抓取購物車
         this.isLoading = false;
         this.$router.push('/checkout');
       });

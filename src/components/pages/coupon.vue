@@ -6,17 +6,15 @@
     </div>
     <table class="table mt-4">
       <thead>
-        <th width="120">due_date</th>
-        <th width="120">id</th>
-        <th width="120">code</th>
-        <th width="120">percent</th>
-        <th width="100">title</th>
-        <th width="120">is_enabled</th>
+        <th width="120">優惠截止日</th>
+        <th width="120">優惠代碼</th>
+        <th width="120">折讓數</th>
+        <th width="100">優惠券名稱</th>
+        <th width="120">啟用 / 未啟用</th>
         <th width="150">編輯 / 刪除</th>
       </thead>
       <tbody v-for="(item) in coupons" :key="item.id">
-        <td>{{ item.due_date }}</td>
-        <td>{{ item.id }}</td>
+        <td>{{ changedateFormat(item.due_date) }}</td>
         <td>{{ item.code }}</td>
         <td>{{ item.percent }}</td>
         <td>{{ item.title }}</td>
@@ -69,7 +67,7 @@
               <span v-if=" isNew === false">編輯優惠券</span>
             </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
+              <span aria-hidden="true" style="fontSize: 2rem;">&times;</span>
             </button>
           </div>
 
@@ -79,7 +77,7 @@
               <div class="col-sm-12">
                 <div class="form-row">
                   <div class="form-group col-sm-6">
-                    <label for="title">title</label>
+                    <label for="title">優惠券名稱</label>
                     <input
                       type="text"
                       class="form-control"
@@ -89,7 +87,7 @@
                     />
                   </div>
                   <div class="form-group col-md-6">
-                      <label for="code">code</label>
+                      <label for="code">優惠代碼</label>
                       <input
                         type="text"
                         class="form-control"
@@ -102,7 +100,7 @@
 
                 <div class="form-row">
                   <div class="form-group col-md-6">
-                    <label for="percent">percent</label>
+                    <label for="percent">折讓數</label>
                     <input
                       type="text"
                       class="form-control"
@@ -112,12 +110,10 @@
                     />
                   </div>
                   <div class="form-group col-md-6">
-                    <label for="due_date">due_date</label>
+                    <label>優惠截止日</label>
                     <input
-                      type="text"
+                      type="date"
                       class="form-control"
-                      id="due_date"
-                      placeholder="請輸入due_date"
                       v-model="tempProduct.due_date"
                     />
                   </div>
@@ -232,6 +228,9 @@ export default {
         api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/coupon/${vm.tempProduct.id}`;
         httpMethod = 'put';
       }
+      const timestamp = Date.parse(this.tempProduct.due_date);
+      console.log(timestamp);
+      this.tempProduct.due_date = timestamp;
       this.$http[httpMethod](api, { data: vm.tempProduct }).then((response) => {
         // console.log(response.data);
         if (response.data.success) {
@@ -262,6 +261,42 @@ export default {
           console.log('刪除失敗');
         }
       });
+    },
+    changedateFormat(timestamp) {
+      const date = new Date(timestamp);
+      const year = date.getFullYear();
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      if (month < 10) {
+        const addzeromonth = `0${month}`;
+        if (day < 10) {
+          const addzeroday = `0${day}`;
+          const currentDateTime = `${String(year)
+          }-${
+            String(addzeromonth)
+          }-${
+            String(addzeroday)}`;
+          return currentDateTime;
+        }
+        const currentDateTime = `${String(year)}-${String(addzeromonth)}-${String(day)}`;
+        return currentDateTime;
+      }
+      if (day < 10) {
+        const addzeroday = `0${day}`;
+        if (month < 10) {
+          const addzeromonth = `0${month}`;
+          const currentDateTime = `${String(year)
+          }-${
+            String(addzeromonth)
+          }-${
+            String(addzeroday)}`;
+          return currentDateTime;
+        }
+        const currentDateTime = `${String(year)}-${String(month)}-${String(addzeroday)}`;
+        return currentDateTime;
+      }
+      const currentDateTime = `${String(year)}-${String(month)}-${String(day)}`;
+      return currentDateTime;
     },
   },
   created() {

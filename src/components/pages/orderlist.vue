@@ -19,9 +19,13 @@
           <td @click="openDetail(item)">{{ item.num }}</td>
           <td @click="openDetail(item)">{{ changedateFormat(item.create_at) }}</td>
           <td @click="openDetail(item)" class="text-left">{{ item.id }}</td>
-          <td @click="openDetail(item)" v-if="item.is_paid === true" style="color: green;">已完成</td>
-          <td @click="openDetail(item)" v-if="item.is_paid === false" style="color: red;">未完成</td>
-          <td @click="openDetail(item)">{{ item.paid_date }}</td>
+          <td @click="openDetail(item)"
+          v-if="item.is_paid === 'true' || item.is_paid === true"
+           style="color: green;">已完成</td>
+          <td @click="openDetail(item)"
+          v-if="item.is_paid === 'false' || item.is_paid === false"
+           style="color: red;">未完成</td>
+          <td @click="openDetail(item)">{{ paiddate(item.paid_date) }}</td>
           <td @click="openDetail(item)">{{ item.payment_method }}</td>
           <td @click="openDetail(item)" class="text-right">{{ item.total | currency }}</td>
           <td><button class="btn btn-outline-primary btn-sm" @click="openEdit(item)">
@@ -121,12 +125,20 @@
           <!-- body(內容) -->
           <div class="modal-body">
             <div class="orderer-info form-group text-left" v-if="editModalObj">
-              <h4>付款資料</h4>
-              <p>付款：
-                <input type="text" v-model="editModalObj.is_paid">
-              </p>
+              <div class="group">
+                <p>付款狀態：</p>
+                <div class="radio">
+                  <input type="radio" id="true" name="paid" value="true"
+                  v-model="editModalObj.is_paid"/>
+                  <label for="true">已完成</label>
+
+                  <input type="radio" id="false" name="paid" value="false"
+                  v-model="editModalObj.is_paid" @click="editModalObj.paid_date = null"/>
+                  <label for="false">未完成</label>
+                </div>
+              </div>
               <p>付款日期：
-                <input type="text" v-model="editModalObj.paid_date">
+                <input type="date" v-model="editModalObj.paid_date">
               </p>
               <p>付款方式：
                 <input type="text" v-model="editModalObj.payment_method">
@@ -136,7 +148,7 @@
 
           <div class="modal-footer">
             <button type="button" class="btn btn-sm bg-primary text-white"
-            data-dismiss="modal" @click="editOrderList(editModalObj.id)">這個按鈕的api呈現後端錯誤</button>
+            data-dismiss="modal" @click="editOrderList(editModalObj.id)">確定</button>
           </div>
         </div>
       </div>
@@ -168,13 +180,16 @@ export default {
   methods: {
     getOrderlist(page = 1) {
       const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/orders?page=${page}`;
-      const vm = this;
-      vm.$store.dispatch('updateLoading', true);
+      this.$store.dispatch('updateLoading', true);
       this.$http.get(api).then((response) => {
         // console.log(response.data.orders);
-        vm.$store.dispatch('updateLoading', false);
-        vm.orderlist = response.data.orders;
-        vm.pagination = response.data.pagination;
+        this.$store.dispatch('updateLoading', false);
+        this.pagination = response.data.pagination;
+        // response.data.orders.forEach((element) => {
+        //   console.log('element:', element);
+        //   this.paiddate(element.paid_date);
+        // });
+        this.orderlist = response.data.orders;
         // console.log(vm.pagination);
       });
     },
@@ -194,17 +209,20 @@ export default {
       this.editModalObj = { ...item };
       $('#editInfo').modal('show');
     },
-    editOrderList(id) { // 不知道錯在哪 顯示500
-      console.log('this.editModalObj.is_paid:', this.editModalObj.is_paid);
+    editOrderList(id) {
       const api = `${process.env.VUE_APP_APIPATH}/api/${process.env.VUE_APP_CUSTOMPATH}/admin/order/${id}`;
       const vm = this;
-      console.log('api:', api);
       vm.$store.dispatch('updateLoading', true);
-      const formData = new FormData();
-      formData.append('is_paid', this.editModalObj.is_paid);
-      this.$http.put(api, formData).then((response) => {
+      console.log('api:', api);
+      if (this.editModalObj.paid_date) {
+        this.editModalObj.is_paid = true;
+      }
+      const item = this.editModalObj;
+      console.log('item:', item);
+      this.$http.put(api, { data: item }).then((response) => {
         console.log(response.data);
         vm.$store.dispatch('updateLoading', false);
+        this.getOrderlist();
       });
     },
     changedateFormat(timestamp) {
@@ -243,6 +261,19 @@ export default {
       const currentDateTime = `${String(year)}-${String(month)}-${String(day)}`;
       return currentDateTime;
     },
+    paiddate(date) {
+      if (date) {
+        if (date === String(date)) {
+          return date;
+        }
+        if (date === Number(date)) {
+          const paiddate = this.changedateFormat(date);
+          return paiddate;
+        }
+        return '傳來的存在';
+      }
+      return '未完成';
+    },
   },
   created() {
     this.getOrderlist();
@@ -274,6 +305,27 @@ export default {
   .order-list{
     table{
       margin: 0;
+    }
+  }
+}
+.group{
+  display: flex;
+  align-items: center;
+  .radio {
+    margin-left: 4px;
+    text-align: left;
+    label {
+      margin-right: 10px;
+      padding: 10px;
+      border: 1px dashed #bbb;
+      cursor: pointer;
+    }
+    input[type="radio"] {
+      opacity: 0; //設置透明度，隱藏原有input樣式
+      display: none;
+    }
+    input:checked + label {
+      border: 1px solid #777;
     }
   }
 }
