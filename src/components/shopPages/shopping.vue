@@ -50,10 +50,13 @@
                     <a href="#" @click.prevent="getProduct(item.id)">{{item.title}}</a>
                   </h5>
                   <div class="price text-right">
-                    <div v-if="item.origin_price === item.price">$ {{item.origin_price}}</div>
-                    <div v-if="item.origin_price !== item.price" class="origin_price">
+                    <div v-if="!item.origin_price || item.origin_price === item.price">
+                      $ {{item.price}}</div>
+                    <div v-if="item.origin_price && item.origin_price !== item.price"
+                    class="origin_price">
                       $ {{item.origin_price}}</div>
-                    <div v-if="item.origin_price !== item.price" class="cool_price">
+                    <div v-if="item.origin_price && item.origin_price !== item.price"
+                    class="cool_price">
                       $ {{item.price}}</div>
                   </div>
                 </div>
@@ -92,10 +95,13 @@
           <div class="modal-body">
             <img :src="product.imageUrl" class="img-fluid"/>
             <div class="price">
-              <div v-if="product.origin_price === product.price">$ {{product.price}}</div>
-              <div v-if="product.origin_price !== product.price" class="origin_price">
+              <div v-if="!product.origin_price || product.origin_price === product.price">
+                $ {{product.price}}</div>
+              <div v-if="product.origin_price && product.origin_price !== product.price"
+              class="origin_price">
                 $ {{product.origin_price}}</div>
-              <div v-if="product.origin_price !== product.price" class="cool_price">
+              <div v-if="product.origin_price && product.origin_price !== product.price"
+              class="cool_price">
                 $ {{product.price}}</div>
             </div>
           </div>
@@ -209,6 +215,7 @@ export default {
         flex-direction: column;
         justify-content: space-between;
         padding-bottom: 0px;
+        height: 100px;
         .title{
           a{
             text-decoration:none;

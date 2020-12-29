@@ -7,16 +7,21 @@
     <table class="table mt-4">
       <thead>
         <th width="120">分類</th>
-        <th>名稱</th>
-        <th width="120">原價</th>
-        <th width="120">售價</th>
+        <th width="120">名稱</th>
+        <th width="100">原價</th>
+        <th width="100">售價</th>
         <th width="100">是否啟用</th>
         <th width="150">編輯 / 刪除</th>
       </thead>
       <tbody v-for="(item) in products" :key="item.id">
         <td>{{ item.category }}</td>
         <td>{{ item.title }}</td>
-        <td class="text-right">{{ item.origin_price | currency }}</td>
+        <td class="text-right text-secondary" style="text-decoration: line-through;"
+        v-if="item.origin_price && item.origin_price !== item.price">
+        {{ item.origin_price | currency }}</td>
+        <td class="text-right"
+        v-if="!item.origin_price || item.origin_price === '' || item.origin_price === item.price">
+        {{ item.price | currency }}</td>
         <td class="text-right">{{ item.price | currency }}</td>
         <td>
           <span v-if="item.is_enabled == 1">啟用</span>
@@ -63,7 +68,8 @@
         <div class="modal-content border-0">
           <div class="modal-header bg-dark text-white">
             <h5 class="modal-title" id="exampleModalLabel">
-              <span>新增產品</span>
+              <span v-if="isNew">新增商品</span>
+              <span v-if="!isNew">編輯商品</span>
             </h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
